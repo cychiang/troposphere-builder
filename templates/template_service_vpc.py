@@ -1,49 +1,8 @@
-from troposphere import Template, ec2, Ref, Output
+from builder.cloud_formation_builder import CloudFormationBuilder
+from troposphere import ec2, Ref, Output
 
 
-class CloudFormation:
-    """
-    Formation: basic units to generate AWS CloudFormation json
-    """
-    def __init__(self):
-        self.description = None
-        self.metadata = None
-        self.resources = []
-        self.outputs = []
-        self.template = Template()
-
-    def __str__(self):
-        self.template.set_description(self.description)
-        self.template.set_metadata(self.metadata)
-        self.template.add_resource(self.resources)
-        self.template.add_output(self.outputs)
-        return self.template.to_json()
-
-
-class CloudFormationBuilder:
-    def __init__(self):
-        self.cloud_formation = CloudFormation()
-
-    def configure_description(self, description):
-        self.cloud_formation.description = description
-
-    def configure_metadata(self, metadata):
-        self.cloud_formation.metadata = metadata
-
-    def configure_outputs(self, outputs):
-        self.cloud_formation.outputs = outputs
-
-    def configure_resources(self, resources):
-        self.cloud_formation.resources = resources
-
-    def add_output(self, output):
-        self.cloud_formation.outputs.append(output)
-
-    def add_resource(self, resource):
-        self.cloud_formation.resources.append(resource)
-
-
-class ServiceVPCTemplate:
+class TemplateServiceVPC(object):
     def __init__(self):
         """init CloudFormationBuilder"""
         self.builder = CloudFormationBuilder()
@@ -111,6 +70,16 @@ class ServiceVPCTemplate:
             EnableDnsHostnames=True,
             EnableDnsSupport=True,
             InstanceTenancy='default',
+            Tags=[
+                {
+                    'Key': 'Environment',
+                    'Value': f'{self.metadata["Environment"]}'
+                },
+                {
+                    'Key': 'Name',
+                    'Value': f'{self.metadata["Environment"]}-ServiceVPC'
+                }
+            ]
         )
         """Configure VpcGatewayAttachment"""
         self.vpc_gateway_attachment = ec2.VPCGatewayAttachment(
@@ -143,7 +112,7 @@ class ServiceVPCTemplate:
                 From='443',
                 To='443'
             ),
-            Protocol=6,
+            Protocol='6',
             RuleAction='allow',
             RuleNumber=100
         )
@@ -153,7 +122,7 @@ class ServiceVPCTemplate:
             CidrBlock='0.0.0.0/0',
             Egress=True,
             NetworkAclId=Ref(self.vpc_network_acl),
-            Protocol=6,
+            Protocol='6',
             RuleAction='allow',
             RuleNumber=200
         )
