@@ -1,4 +1,4 @@
-from templates.template_service_vpc import TemplateServiceVPC
+from troposphere_builder.templates.template_service_vpc import TemplateServiceVPC
 
 
 def create_from_template():
@@ -27,5 +27,4 @@ def create_from_template():
             fp.write(template_service_vpc.cloud_formation.__str__()+'\n')
 
 
-if __name__ == '__main__':
-    create_from_template()
+create_from_template()

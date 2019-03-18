@@ -1,4 +1,4 @@
-from builder.cloud_formation_builder import CloudFormationBuilder
+from troposphere_builder.cloud_formation_builder import CloudFormationBuilder
 from troposphere import ec2, Ref, Output
 
 
