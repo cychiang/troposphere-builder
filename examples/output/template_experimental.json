@@ -1,35 +1,9 @@
-# troposphere_builder
-The `troposphere_builder` is a template builder on top of the troposphere. It can help developer to create and manage there own CloudFormation templates much easier.
-
-# Installation
-Install package locally.
-```bash
-git clone git@github.com:cychiang/troposphere-builder.git
-cd troposphere-builder
-pip install -e .
-```
-
-# Example results
-The example results can be found at examples/output
-
-# How to use
-## With default construct.
-```python
-from troposphere_builder.templates.template_service_vpc import TemplateServiceVPC
-
-template_service_vpc = TemplateServiceVPC()
-template_service_vpc.construct_template()
-print(str(template_service_vpc.cloud_formation))
-
-```
-The example output of the code above:
-```json
 {
     "Description": "Service VPC",
     "Metadata": {
         "DependsOn": [],
-        "Environment": "Development",
-        "StackName": "Development-VPC"
+        "Environment": "Experimental",
+        "StackName": "Experimental-VPC"
     },
     "Outputs": {
         "InternetGateway": {
@@ -49,11 +23,11 @@ The example output of the code above:
                 "Tags": [
                     {
                         "Key": "Environment",
-                        "Value": "Development"
+                        "Value": "Experimental"
                     },
                     {
                         "Key": "Name",
-                        "Value": "Development-InternetGateway"
+                        "Value": "Experimental-InternetGateway"
                     }
                 ]
             },
@@ -68,11 +42,11 @@ The example output of the code above:
                 "Tags": [
                     {
                         "Key": "Environment",
-                        "Value": "Development"
+                        "Value": "Experimental"
                     },
                     {
                         "Key": "Name",
-                        "Value": "Development-ServiceVPC"
+                        "Value": "Experimental-ServiceVPC"
                     }
                 ]
             },
@@ -94,11 +68,11 @@ The example output of the code above:
                 "Tags": [
                     {
                         "Key": "Environment",
-                        "Value": "Development"
+                        "Value": "Experimental"
                     },
                     {
                         "Key": "Name",
-                        "Value": "Development-NetworkAcl"
+                        "Value": "Experimental-NetworkAcl"
                     }
                 ],
                 "VpcId": {
@@ -139,58 +113,3 @@ The example output of the code above:
         }
     }
 }
-```
-## With custom values in construct.
-```python
-from troposphere_builder.templates.template_service_vpc import TemplateServiceVPC
-
-template_service_vpc = TemplateServiceVPC()
-template_service_vpc.construct_template(
-    Description='My Production VPC Service',
-    Metadata={
-        'DependsOn': [],
-        'Environment': 'Production',
-        'StackName': 'Production-VPC'
-    }
-)
-print(str(template_service_vpc.cloud_formation))
-
-```
-## Add additional resource and output.
-```python
-from troposphere_builder.templates.template_service_vpc import TemplateServiceVPC
-from troposphere import ec2, Output, Ref
-
-template_service_vpc = TemplateServiceVPC()
-template_service_vpc.construct_template(
-    Description='My Production VPC Service',
-    Metadata={
-        'DependsOn': [],
-        'Environment': 'Production',
-        'StackName': 'Production-VPC'
-    }
-)
-template_service_vpc.add_resource(
-    ec2.InternetGateway(
-    'AdditionalInternetGateway',
-    Tags=[
-            {
-                'Key': 'Environment',
-                'Value': 'Additional'
-            },
-            {
-                'Key': 'Name',
-                'Value': 'Additional-InternetGateway'
-            }
-        ]
-    )
-)
-template_service_vpc.add_output(
-    Output(
-        'VPCID2',
-        Value=Ref('VPC')
-    )
-)
-print(str(template_service_vpc.cloud_formation))
-
-```
