@@ -12,14 +12,14 @@ class CloudFormation(object):
         self.metadata = None
         self.resources = []
         self.outputs = []
-        self.template = Template()
 
     def __str__(self):
-        self.template.set_description(self.description)
-        self.template.set_metadata(self.metadata)
-        self.template.add_resource(self.resources)
-        self.template.add_output(self.outputs)
-        return self.template.to_json()
+        template = Template()
+        template.set_description(self.description)
+        template.set_metadata(self.metadata)
+        template.add_resource(self.resources)
+        template.add_output(self.outputs)
+        return template.to_json()
 
 
 class CloudFormationBuilder(object):
