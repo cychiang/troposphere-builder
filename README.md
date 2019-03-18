@@ -10,12 +10,13 @@ pip install -e .
 ```
 
 # How to use
+## With default construct.
 ```python
 from troposphere_builder.templates.template_service_vpc import TemplateServiceVPC
 
 template_service_vpc = TemplateServiceVPC()
 template_service_vpc.construct_template()
-print(template_service_vpc.cloud_formation.__str__())
+print(str(template_service_vpc.cloud_formation))
 
 ```
 The example output of the code above:
@@ -135,4 +136,58 @@ The example output of the code above:
         }
     }
 }
+```
+## With custom values in construct.
+```python
+from troposphere_builder.templates.template_service_vpc import TemplateServiceVPC
+
+template_service_vpc = TemplateServiceVPC()
+template_service_vpc.construct_template(
+    Description='My Production VPC Service',
+    Metadata={
+        'DependsOn': [],
+        'Environment': 'Production',
+        'StackName': 'Production-VPC'
+    }
+)
+print(str(template_service_vpc.cloud_formation))
+
+```
+## Add additional resource and output.
+```python
+from troposphere_builder.templates.template_service_vpc import TemplateServiceVPC
+from troposphere import ec2, Output, Ref
+
+template_service_vpc = TemplateServiceVPC()
+template_service_vpc.construct_template(
+    Description='My Production VPC Service',
+    Metadata={
+        'DependsOn': [],
+        'Environment': 'Production',
+        'StackName': 'Production-VPC'
+    }
+)
+template_service_vpc.add_resource(
+    ec2.InternetGateway(
+    'AdditionalInternetGateway',
+    Tags=[
+            {
+                'Key': 'Environment',
+                'Value': 'Additional'
+            },
+            {
+                'Key': 'Name',
+                'Value': 'Additional-InternetGateway'
+            }
+        ]
+    )
+)
+template_service_vpc.add_output(
+    Output(
+        'VPCID2',
+        Value=Ref('VPC')
+    )
+)
+print(str(template_service_vpc.cloud_formation))
+
 ```

@@ -24,7 +24,7 @@ def create_from_template():
         with open(f'output/template_{key}.json', mode='w', encoding='UTF-8') as fp:
             template_service_vpc = TemplateServiceVPC()
             template_service_vpc.construct_template(Metadata=metadata[key])
-            fp.write(template_service_vpc.cloud_formation.__str__()+'\n')
+            fp.write(str(template_service_vpc.cloud_formation)+'\n')
 
 
 create_from_template()
